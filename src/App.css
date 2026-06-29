@@ -1,0 +1,20 @@
+.app {
+  width: 100%;
+  background-color: var(--body-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+.main {
+  margin-left: 120px;
+  background: transparent;
+  transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 2; /* Render content on top of fixed shapes canvas background */
+}
+
+@media screen and (max-width: 1024px) {
+  .main {
+    margin-left: 0;
+  }
+}
