@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './NavSidebar.css';
 import {
     FiHome,
@@ -26,6 +26,40 @@ const navItems = [
 ];
 
 const NavSidebar = () => {
+    const [activeSection, setActiveSection] = useState("home");
+
+    useEffect(() => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '-30% 0px -50% 0px', // Trigger when section is in the middle of the viewport
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        navItems.forEach(item => {
+            const targetId = item.href;
+            if (targetId.startsWith('#')) {
+                const element = document.querySelector(targetId);
+                if (element) {
+                    observer.observe(element);
+                }
+            }
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
     const handleLinkClick = (e) => {
         const targetId = e.currentTarget.getAttribute('href');
         if (targetId && targetId.startsWith('#')) {
@@ -47,11 +81,12 @@ const NavSidebar = () => {
                     <ul className="nav-sidebar__list">
                         {navItems.map((item, index) => {
                             const IconComponent = item.icon;
+                            const isActive = item.href === `#${activeSection}`;
                             return (
                                 <li key={index} className="nav-sidebar__item">
                                     <a
                                         href={item.href}
-                                        className="nav-sidebar__link"
+                                        className={`nav-sidebar__link ${isActive ? 'active' : ''}`}
                                         onClick={handleLinkClick}
                                         aria-label={item.tooltip}
                                     >
